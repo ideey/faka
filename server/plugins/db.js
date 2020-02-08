@@ -1,7 +1,6 @@
 module.exports = app => {
     const mongoose = require("mongoose")
-    //mongoose.connect('mongodb://q.deey.top:57890/faka', {
-    mongoose.connect('mongodb://fakaapi.idaay.com:57890/faka', {
+    mongoose.connect('mongodb://fakaapi.idaay.com:68890/faka', {
       useNewUrlParser: true,
       useCreateIndex:true,
       useFindAndModify:false,
