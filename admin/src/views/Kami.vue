@@ -112,15 +112,21 @@ export default {
       handleClick(tab, event) {
       },
       text_change(file,fileList){
+          //console.log(file)
           let self = this
           const selectedFile = document.getElementsByName('textFile_ideey')[0].files[0]
           const size = selectedFile.size
-          console.log(size)
+          if(size > 1*1024*1024){
+              this.$message({type:'warning',message:'文件超过1M'})
+                self.fileList = [] //重置上传列表
+                selectedFile.value=''  //重置file
+              return
+          }
           const reader = new FileReader()
           reader.readAsText(selectedFile)
                 reader.onload = function () {
-                console.log(this.result);
-                let a = this.result.replace(/\r/g,'') //去换win下的换行
+                //console.log(this.result);
+                //let a = this.result.replace(/\r/g,'') //去换win下的换行
                 self.kami_s = this.result;
                 self.fileList = [] //重置上传列表
                 selectedFile.value=''  //重置file
