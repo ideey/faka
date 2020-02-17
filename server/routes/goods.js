@@ -71,8 +71,45 @@ module.exports = app => {
       res.send({code:1,data:d})
     })
     router.post('/get_kami_list',async(req,res)=>{
-      const d = await Kami.find().populate('type_id').populate('goods_id')
-      res.send({code:1,data:d})
+      const {type_id,goods_id,kami_status,page} = req.body
+      const limit = 50 //每页返回50
+      const skip = (Number(page) - 1)*limit 
+      const match ={} //查询条件
+      if(goods_id){
+        match.goods_id = mongoose.Types.ObjectId(goods_id)
+      }
+      if(type_id){
+        match.type_id = mongoose.Types.ObjectId(type_id)
+      }
+      if(kami_status){
+        const status = Number(kami_status)
+        if(status>0){
+          match.status = status
+        }
+      }
+      //console.log(match)
+      const count = await Kami.find(match).countDocuments()
+      const f = await Kami.aggregate([
+        {  $match:match  },{ $skip:skip }, { $limit:limit  },
+        {
+          $lookup:{
+            from:'goods',
+            localField:'goods_id',
+            foreignField:'_id',
+            as:'goods_info'         
+          },
+        },
+        {
+          $lookup:{
+            from:'types',
+            localField:'type_id',
+            foreignField:'_id',
+            as:'type_info'         
+          },
+        }
+      ])
+      //const d = await Kami.find().populate('type_id').populate('goods_id')
+      res.send({code:1,data:f,count:count})
     })
     router.post('/del_kami',async(req,res)=>{
       const d = await Kami.findByIdAndDelete(req.body._id)

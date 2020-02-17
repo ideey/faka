@@ -1,1 +1,1 @@
-rsync -vr --exclude=node_modules  ./ root@q.deey.top:/home/www/faka
+rsync -vr --exclude=node_modules --exclude=.git ./ root@q.deey.top:/home/www/faka

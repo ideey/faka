@@ -13,6 +13,11 @@
                 <van-tag type="danger">{{goods.price}}元</van-tag>
             </template>
         </van-cell>
+        <van-cell center title="库存" >
+              <template slot="default">
+                <van-tag type="primary">{{goods.stock_now}}</van-tag>
+            </template>
+        </van-cell>
         <van-cell center  :value="goods.name" />
         <van-cell center  :value="goods.description" label="描述信息" />
         </van-cell-group>
@@ -25,10 +30,12 @@
             </template>
             </van-cell>
 
-            <van-field v-model="order.qq_email" placeholder="请输入联系方式" />
-            <van-field v-model="order.password" placeholder="请输入查询密码" />
+            <van-field v-model="order.qq_email" placeholder="请输入联系方式,qq 或 手机 或 邮箱 牢记" />
+            <van-field v-model="order.password" placeholder="请输入查询密码,查询订单用,牢记" />
             </van-cell-group>
-            <div class="goods_detail_bu"><van-button type="primary" size="large" @click="get_order">提交订单</van-button></div>
+            <div class="goods_detail_bu">
+                <van-button type="primary" size="large" @click="get_order" :disabled="goods.stock_now===0">提交订单</van-button>
+                </div>
         </div>
   </div>
 </template>
@@ -40,9 +47,9 @@ export default {
         return{
             goods:{},
             order:{
-                num:1,
-
-            }
+                num:1,stock_now:0
+            },
+            
         }
     },
     created(){this.fetch()},

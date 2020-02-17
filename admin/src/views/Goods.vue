@@ -34,12 +34,12 @@
                           sortable
                           width="80">
                         </el-table-column>
-                        <el-table-column
+<!--                         <el-table-column
                           prop="stock"
                           label="库存"
                           sortable
                           width="80">
-                        </el-table-column>
+                        </el-table-column> -->
                         <el-table-column
                           prop="kamiType"
                           label="卡密类型"

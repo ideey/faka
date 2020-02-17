@@ -20,6 +20,14 @@ module.exports = async app => {
       alipayPublicKey : alipay_web.pay_info.alipay_pub_key,
     }) 
 
+    //保存支付设置
+    router.post('/set_pay',authMiddleware(),async(req,res)=>{
+      const d = await PayConfig.create(req.body)
+      res.send({code:1,data:d})
+    })
+
+
+
     //请求支付连接 web
     async function get_alipay_web_link(outTradeNo,money,subject,passback_params){
       const formData = new AlipayFormData()
@@ -43,10 +51,19 @@ module.exports = async app => {
       //支付连接及 支付过期时间写入订单信息
       const t = await Order.findByIdAndUpdate(outTradeNo,{
         pay_link:result,
-        pay_bad_end_time:Date.now() + 9*60*1000 //
+        pay_bad_end_time:Date.now() + 9*60*1000, //9分钟过期
+        pay_type:passback_params
       })
       return {code:1,data:result};
     }
+    //请求支付宝web支持连接，返回给客户端，跳转
+    router.post('/get_alipay_web_link',async(req,res)=>{
+      const {_id,goods_name,money,pay_type} = req.body
+      const d = await get_alipay_web_link(_id,money,goods_name,pay_type)
+      res.send(d)
+    })
+
+
     //请求支付链接 mobile
     async function get_alipay_mobile_link(outTradeNo,money,subject,passback_params){
       const formData = new AlipayFormData()
@@ -70,21 +87,11 @@ module.exports = async app => {
       //支付连接及 支付过期时间写入订单信息
       const t = await Order.findByIdAndUpdate(outTradeNo,{
         pay_link:result,
-        pay_bad_end_time:Date.now() + 9*60*1000 //
+        pay_bad_end_time:Date.now() + 9*60*1000, //
+        pay_type:passback_params
       })
       return {code:1,data:result};
     }
-    //保存支付设置
-    router.post('/set_pay',authMiddleware(),async(req,res)=>{
-      const d = await PayConfig.create(req.body)
-      res.send({code:1,data:d})
-    })
-    //请求支付宝web支持连接，返回给客户端，跳转
-    router.post('/get_alipay_web_link',async(req,res)=>{
-      const {_id,goods_name,money,pay_type} = req.body
-      const d = await get_alipay_web_link(_id,money,goods_name,pay_type)
-      res.send(d)
-    })
     //请求支付宝moble支付链接，返回客户端,跳转
     router.post('/get_alipay_mobile_link',async(req,res)=>{
       const {_id,goods_name,money,pay_type} = req.body
@@ -122,7 +129,7 @@ module.exports = async app => {
                       status:2,
                       kami_id:k._id,
                       kami:k.kami,
-                      pay_type:'alipay_web',
+                      //pay_type:'alipay_web',
                       pay_time:moment().format('YYYY-MM-DD HH:mm:ss')
                     })
                 }else{
@@ -181,7 +188,8 @@ module.exports = async app => {
                       status:2,
                       kami_id:k._id,
                       kami:k.kami,
-                      pay_type:req.body.passback_params,
+                      //支付方式在返回支付连接时写入,订单后续不能更新付款方式
+                      //pay_type:req.body.passback_params,  
                       pay_time:moment().format('YYYY-MM-DD HH:mm:ss')
                     })
                 }else{
@@ -191,7 +199,7 @@ module.exports = async app => {
                     status:4,
                     //kami_id:k._id,
                     //kami:k.kami,
-                    pay_type:'alipay_web',
+                    //pay_type:'alipay_web',
                     pay_time:moment().format('YYYY-MM-DD HH:mm:ss')
                   })
                 }

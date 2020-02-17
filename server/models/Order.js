@@ -13,10 +13,10 @@ const schema = new mongoose.Schema({
   qq_email:String,
   password:String,//查询密码
   ip:String,
-  status:Number,//1-待支付 2-已支付 3-手动确认支付 4-支付成功,无合适卡密
-  pay_type:String,//支付通道及信息
+  status:{type:Number,index:true},//1-待支付 2-已支付 3-手动确认支付 4-支付成功,无合适卡密
+  pay_type:String,//支付通道及信息 支付成功后写入 pay_yes:表示手动确认
   pay_time:String,//支付时间
-  pay_bad_end_time:Number,//最后的支付时间戳
+  pay_bad_end_time:Number,//最后的支付时间戳 这个只对支付宝有效,因为连接有时效
   pay_link:String,//支付连接
   pay_good_info:{},//支付成功后的返回信息
 },

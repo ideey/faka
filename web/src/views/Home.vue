@@ -13,7 +13,9 @@
       <el-main>
         <div class="mid_mid"><router-view  :key="$route.path"/></div>
         </el-main>
-      <el-footer>Footer</el-footer>
+      <el-footer><span style="color:blueviolet;">交流QQ群: 1054239862</span><br>
+      <a href="https://m.faka.idaay.com">移动端</a> <a href="https://fakacp.idaay.com">管理端</a>
+      </el-footer>
     </el-container>
   </div>
 </template>

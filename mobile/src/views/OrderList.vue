@@ -25,13 +25,13 @@
                 <div slot="title">
                 <van-icon name="points" size="22" /> 浏览器缓存
                 </div>
-                <div class="order_list_q">浏览器缓存查询</div>
+                <div class="order_list_q">暂不放开</div>
             </van-tab>
             <van-tab name='orderNo'>
                 <div slot="title">
                 <van-icon name="description" size="22"/> 订单号
                 </div>
-                <div class="order_list_q">订单号查询</div>
+                <div class="order_list_q">暂不放开</div>
             </van-tab>
             </van-tabs>
       </div>

@@ -12,7 +12,7 @@ module.exports = app => {
     })
     //获取所有订单信息 后台用
     router.post('/get_all_order',async(req,res)=>{
-      const d = await Order.find().populate('type_id').populate('goods_id').populate('kami_id')
+      const d = await Order.find()//.populate('type_id').populate('goods_id').populate('kami_id')
       res.send({code:1,data:d})
     })
 

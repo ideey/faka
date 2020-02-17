@@ -12,10 +12,20 @@ module.exports = app => {
 
     router.post('/get_goods',async (req,res)=>{
       let d={}
+      
       if(req.body.type_id){
+
          d = await Goods.find({type:mongoose.Types.ObjectId(req.body.type_id)}).populate('type')
+
       }else if(req.body.id){
-         d = await Goods.findById(req.body.id).populate('type')
+              
+                d = await Goods.findById(req.body.id).populate('type').lean()
+                const s = await Kami.find({
+                  goods_id:mongoose.Types.ObjectId(req.body.id),
+                  status:1,
+                  active:1
+                  }).countDocuments()
+                d.stock_now = s
       }else{
         d = await Goods.find().populate('type')
       }

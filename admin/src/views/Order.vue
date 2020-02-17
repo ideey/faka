@@ -141,7 +141,7 @@ export default {
   methods:{
     async fetch(){
       const d = await this.$http.post('/order/api/get_all_order')
-      console.log(d.data.data)
+      //console.log(d.data.data)
       this.order_list = d.data.data
     },
     handleEdit(row){

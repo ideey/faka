@@ -4,7 +4,7 @@
       <div class="goods_1"><img :src="item.goods_img" alt="" style="max-width:100%"></div>
       <span class="goods_2 mid_mid">{{item.name}}</span>
       <span class="goods_3 mid_mid">{{item.price}}元</span>
-      <span class="goods_4 mid_mid">798人付款</span>
+      <span class="goods_4 mid_mid"></span>
       <div class="goods_5 mid_mid"><div class="goods_buy" @click="go_buy(item._id)">现在购买</div></div>
     </div>
 

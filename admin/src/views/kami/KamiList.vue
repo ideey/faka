@@ -1,28 +1,54 @@
 <template>
   <div>
       <div class="kami_list_1">
-          <el-button @click="fetch()" size="mini">刷新列表</el-button>
-          <el-alert  type="warning">点击 "删除" ,不管卡密是否出售,都会 直 接 删 除,请小心操作</el-alert>
-          
+        <el-select v-model="form.type_id" placeholder="选择分类" size="mini" @change="type_change" clearable>
+                <el-option
+                v-for="item in types"
+                :key="item._id"
+                :label="item.name"
+                :value="item._id"
+                >
+                </el-option>
+            </el-select>
+            <el-select v-model="form.goods_id" placeholder="选择商品" size="mini" clearable @change="goods_change">
+                <el-option
+                v-for="item in goods"
+                :key="item._id"
+                :label="item.name"
+                :value="item._id">
+                </el-option>
+            </el-select>
+            <el-select v-model="form.kami_status" placeholder="卡密状态" size="mini" clearable @change="status_change">
+                <el-option  label="全部" value=0>  </el-option>
+                <el-option  label="待出售" value=1>  </el-option>
+                <el-option  label="锁定" value=2>  </el-option>
+                <el-option  label="已出售" value=3>  </el-option>
+            </el-select>
+            <el-button @click="query()" size="mini" type="primary">查询</el-button>
       </div>
       <el-table
       :data="kami_list"
       height="450px"
       >
+        <el-table-column
+      type="index"
+      label="序号"
+      width="50">
+    </el-table-column>
     <el-table-column
-        prop="type_id.name"
+        prop="type_info[0].name"
         label="商品分类"
         sortable
         width="100">
 </el-table-column>
     <el-table-column
-        prop="goods_id.name"
+        prop="goods_info[0].name"
         label="商品名称"
        sortable
         width="160">
 </el-table-column>
 <el-table-column
-        prop="goods_id.price"
+        prop="goods_info[0].price"
         label="价格"
         sortable
         width="100">
@@ -34,7 +60,7 @@
         width="180">
 </el-table-column>
 <el-table-column
-        prop="goods_id.kamiType"
+        prop="goods_info[0].kamiType"
         label="卡密类型"
         width="100">
         <template slot-scope="scope">
@@ -64,14 +90,23 @@
 </el-table-column>
 <el-table-column
         label="操作"
-        width="120">
+        width="80">
         <template slot-scope="scope">
              <el-button @click="handleDel(scope.row)" type="text" size="small">删除</el-button>
-             <el-button @click="handleSell(scope.row)" type="text" size="small">可售状态切换</el-button>
+             <!-- <el-button @click="handleSell(scope.row)" type="text" size="small">可售状态切换</el-button> -->
              
         </template>
 </el-table-column>
 </el-table>
+  <div class="block">
+    <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page.sync="form.page"
+      :page-size="50"
+      layout="total, prev, pager, next"
+      :total="count">
+    </el-pagination>
+  </div>
   </div>
 </template>
 
@@ -81,19 +116,29 @@ export default {
       //props:['hot4_list'],
       data:function(){
           return{
-              kami_list:[]
+              kami_list:[],
+              form:{type:'',goods_id:'',kami_status:'',page:1},
+              types:[],
+              goods:[],
+              count:0
           }
       },
       created(){
           this.fetch()
+          this.get_types()
       },
       methods:{
-        async  fetch(){
-            const d = await this.$http.post('/goods/api/get_kami_list')
-           
-            if(d.data.code === 1){
-                this.kami_list = d.data.data
+        async  fetch(page){
+            if(page){
+                page =Number(page)
+            }else{
+                page = 1
             }
+            this.form.page = page
+            this.query()
+          },
+          handleCurrentChange(page){
+              this.fetch(page)
           },
           async handleDel(row){
               const d = await this.$http.post('/goods/api/del_kami',row)
@@ -103,6 +148,76 @@ export default {
               this.fetch()
           },
           async handleNoSell(){},
+          async type_change(type){
+             if(!type){
+                 this.form.goods_id=''
+                 this.goods = []
+                 //this.form.kami_status=''
+                 return
+             }
+            const d = await this.$http.post('/goods/api/get_goods',{type_id:type})
+            if(d.data.data.length > 0){
+            let a = d.data.data.filter(el=>{
+                return el.active === 1
+                })
+                a.sort((e1,e2)=>{
+                return e1.sort - e2.sort
+                })
+                this.goods = a
+                this.form.goods_id = ''
+                this.form.kami_status = ''
+            }else{
+                    this.form.goods_id = ''
+                    this.form.kami_status = ''
+                    this.goods = []
+                    this.$confirm('此分类下还没有商品', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                    }).then(() => {
+                        this.$router.push('/set_goods')
+                    }).catch(() => {
+                        
+                    });
+                }  
+          },
+        goods_change(){
+            this.form.page =1
+        },
+        status_change(){
+            this.form.page =1
+        },
+        async get_types(){
+          //获取分类
+          const d =  await this.$http.post('/goods/api/get_types')
+         
+          let a = d.data.data.filter(el=>{
+            return el.active === 1
+            })
+            a.sort((e1,e2)=>{
+            return e1.sort - e2.sort
+            })
+            this.types = a
+        },
+        async query(){
+/*            if(!this.form.type_id ){
+               this.$message({type:"error",message:"请选择分类"})
+               return;
+           }
+           if(!this.form.goods_id){
+               this.$message({type:"error",message:"请选择商品"})
+               return;
+           }
+           if(!this.form.kami_status){
+               this.$message({type:"error",message:"请选择卡密状态"})
+               return;
+           } */
+           const d = await this.$http.post('/goods/api/get_kami_list',this.form)
+           if(d.data.code === 1){
+               this.count = d.data.count
+               this.kami_list = d.data.data
+           }
+        }
       }
 }
 </script>
@@ -110,7 +225,7 @@ export default {
 <style>
 .kami_list_1{
     display: grid;
-    grid-template-columns: 120px 500px;
+    grid-template-columns: 200px 200px 200px 120px 150px;
     grid-column-gap: 20px;
 
 }

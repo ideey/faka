@@ -49,8 +49,12 @@
                     </div>
                     </van-panel>
           </div>
+          <div v-else-if="pay_bad_status===5">
+              <van-button size="large" type="primary" @click="pay_continue_lepay">继续用乐付支付</van-button>
+              <van-button size="large" type="info" @click="pay_yes_no_lepay">刷新状态</van-button>
+          </div>
           <div v-else>
-              <van-cell  value="支付超时,不要再继续支持,请重新下单.如有疑问,请联系客服" />
+              <van-cell  value="支付超时,不要再继续支付,请重新下单.如有疑问,请联系客服" />
           </div>
       </div>
   </div>
@@ -66,11 +70,26 @@ export default {
         order_info:{pay_good_info:{}},
         pay_good:false,
         pay_text:'支付状态',
-        pay_bad_status:0,//1-可以继续支付 2-支付连接过时 3-没有支付连接,要新建 4-支付成功-无库存
+        /***
+         * pay_bad_status状态
+         * 0-付款成功--而且有卡密
+         * 1-支付宝可以继续支付 
+         * 2-支付宝连接过时 
+         * 3-没有支付宝连接,要新建 --mobile端不要用
+         * 4-支付成功--但无卡密
+         * 5-乐付未成功
+         * 
+         * ***/
+        pay_bad_status:0,
         pay_bad_end_time:0,//支付连接过期时间 倒计时结束时间
        }
      },
-     created(){this.fetch()},
+     async created(){
+         await this.fetch()
+            if(this.order_info.pay_type==='lepay'){
+                this.pay_yes_no_lepay()
+            }
+         },
      methods:{
          async fetch(){
               const d = await this.$http.post('/web/order/api/get_order_info',{id:this.id})
@@ -83,20 +102,24 @@ export default {
                     }else if(this.order_info.status===1){
                         this.pay_good = false
                         this.pay_text = '支付未成功'
-                        if(this.order_info.pay_link){//是否有支付连接
-                            this.pay_bad_end_time = parseInt(this.order_info.pay_bad_end_time/1000);
-                            
-                            if(Date.now()>this.order_info.pay_bad_end_time){ //判断支持连接是否过时
-                            this.time = this.order_info.pay_bad_end_time - Date.now() 
-                                    this.pay_bad_status = 2
-                                    this.pay_text = '支付失败'
+                        if(this.order_info.pay_type === 'alipay_mobile'){
+                            if(this.order_info.pay_link){//是否有支付连接
+                                this.pay_bad_end_time = parseInt(this.order_info.pay_bad_end_time/1000);
+                                if(Date.now()>this.order_info.pay_bad_end_time){ //判断支持连接是否过时
+                                this.time = this.order_info.pay_bad_end_time - Date.now() 
+                                        this.pay_bad_status = 2
+                                        this.pay_text = '支付失败'
                             }else{
                                 this.time = this.order_info.pay_bad_end_time - Date.now() 
                                 this.pay_bad_status = 1
                             }
-                        }else{
-                            this.pay_bad_status = 3
+                            }else{
+                                this.pay_bad_status = 3
+                            }
+                        }else if(this.order_info.pay_type==='lepay'){
+                            this.pay_bad_status = 5
                         }
+
                     }else if(this.order_info.status === 4){
                         this.pay_good === true
                         this.pay_text = '支付成功'
@@ -143,10 +166,33 @@ export default {
 
                  this.fetch()
              }else{
-                 this.$message({type:"error",message:'订单已支付'})
+                 this.$notify({type:"warning",message:'订单已支付'})
                   this.fetch()
              }
          },
+         //乐付订单查询状态
+        async pay_yes_no_lepay(){
+            if(this.order_info.status ===1){
+                const d = await this.$http.post('/lepay/api/query_status',this.order_info)
+                console.log(d.data)
+                if(d.data.status===1){
+                     if(d.data.data.trade_status==='SUCCESS'){
+                         this.$notify({type:"success",message:'支付成功'})
+                     }else if(d.data.data.trade_status==='NOTPAY'){
+                         this.$notify({type:"danger",message:'未支付成功'})
+                     }else{
+                         this.$notify({type:"danger",message:d.data.data.trade_status})
+                     }
+
+                }else{
+                    this.$notify({type:"warning",message:d.data.msg})
+                }
+                this.fetch()
+            }else{
+                 this.$toast('已支付过了');
+            }
+        },
+        pay_continue_lepay(){}
      }
 }
 </script>

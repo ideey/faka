@@ -4,7 +4,7 @@
     <div>
     <el-tabs v-model="activeName" >
         <el-tab-pane label="支付列表" name="list">
-            <el-card>目前支持支付宝电脑端扫码,更多支付方式对接中...</el-card>
+            <el-card>目前支持支付宝/乐支付,更多支付方式对接中...</el-card>
         </el-tab-pane>
         <el-tab-pane label="添加支付方式" name="add">
                 <div class="set_pay_1">

@@ -13,6 +13,7 @@ require('./plugins/db')(app)//数据库及模型
 require('./routes/admin.js')(app) //用户管理
 require('./routes/goods.js')(app) //商品及卡密管理
 require('./routes/pay.js')(app)   //支付相关
+require('./routes/lepay.js')(app)   //乐支付相关
 require('./routes/order.js')(app)   //后台管理订单相关
 
 require('./routes/web/goods.js')(app)   //前端商品相关

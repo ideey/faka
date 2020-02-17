@@ -63,6 +63,11 @@
                     </el-input>
                 
             </div>
+            <div>
+                <el-alert v-if="kami_num.length===2"  type="success"  :closable="false">
+                    {{`空行已经删除. 读取卡密信息 ${kami_num[0]} 条,去除重复后 ${kami_num[1]} 条!`}}
+                    </el-alert>
+            </div>
             <div class="add_kami_3">
                 <el-button size="mini" type="primary" @click="add_kami">添加卡密</el-button>
             </div>
@@ -92,6 +97,7 @@ export default {
         kami_s:'',
         fileList:[],
         placeholder:'请输入卡密',
+        kami_l:'',
         p:['',
         '默认卡密类型：一行一条,一条只出售一次,比如:\n12345-abcd\n12346-feghe23\n\n如果只有单独的卡号或单独的密码,就填入单独一行,比如: \nabcdW3frt876GHGVF',
         '循环卡密类型:一行一条,可以输入多条,每条可以循环出售,比如：\n123456-abcdef\n23445-fe7ugfe',
@@ -102,12 +108,20 @@ export default {
         '默认卡密类型：一行一条,一条只出售一次',
         '循环卡密类型:一行一条,可以输入多条,每条可以循环出售',
         '重复卡密类型:只能输入一条,这一条卡密重复出售'
-        ]
+        ],
+        kami_num:[],//读取文本后的卡密数量[原数量,去重后]
       }
     },
     created(){
         this.fetch()
     },
+/*     watch:{
+        kami_s:function(n,o){
+            let kami_list = this.kami_s.split('\n')
+            let a_set_list = [...new Set(kami_list)]
+            this.kami_num = [kami_list.length,a_set_list.length]
+        }
+    }, */
     methods: {
       handleClick(tab, event) {
       },
@@ -126,8 +140,11 @@ export default {
           reader.readAsText(selectedFile)
                 reader.onload = function () {
                 //console.log(this.result);
-                //let a = this.result.replace(/\r/g,'') //去换win下的换行
-                self.kami_s = this.result;
+                let a = this.result.replace(/^\s*$/gm,'').replace(/\r/g,'') //去换win下的换行 空行
+                let kami_list = a.split('\n')
+                let a_set_list = [...new Set(kami_list)]
+                self.kami_num = [kami_list.length,a_set_list.length]
+                self.kami_s = a_set_list.join('\n')
                 self.fileList = [] //重置上传列表
                 selectedFile.value=''  //重置file
         }
@@ -146,7 +163,20 @@ export default {
             this.types = a
       },
       async add_kami(){
-          let kami_list = this.kami_s.split('\n')
+          if(!this.form.type_id){
+              this.$message({type:'warning',message:'请选分类'})
+              return;
+          }
+          if(!this.form.goods_id){
+                this.$message({type:'warning',message:'请选商品'})
+                return;
+          }
+          if(!this.kami_s){
+              this.$message({type:'warning',message:'必须要有卡密内容'})
+              return
+          }
+          let a = this.kami_s.replace(/^\s*$/gm,'').replace(/\r/g,'') //去换win下的换行 空行
+          let kami_list = a.split('\n')
           let p = []
           kami_list.forEach(el => {
              let a = {
@@ -162,11 +192,11 @@ export default {
           if(d.data.code === 1){
               this.$message({type:'success',message:'添加卡密成功'})
               this.kami_s = ''
+              this.kami_num =[]
           }
       },
       async type_change(type){
           const d = await this.$http.post('/goods/api/get_goods',{type_id:type})
-          //console.log(d.data.data)
           if(d.data.data.length > 0){
           let a = d.data.data.filter(el=>{
             return el.active === 1
@@ -194,8 +224,6 @@ export default {
                 }).catch(() => {
                     
                 });
-
-               
             }  
           },
         goods_change(v){

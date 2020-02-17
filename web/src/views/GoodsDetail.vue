@@ -10,10 +10,11 @@
                       </span>
                 </div>
               <div class="goods_detail_price">价格:{{goods.price}}元</div>
+              <div class="goods_detail_qq">商品库存     <el-tag type="danger">{{goods.stock_now}}</el-tag> </div>
               <div  class="goods_detail_qq">购买数量<el-input-number v-model="order.num"  :min="1" :max="1" label="描述文字" size="small"></el-input-number></div>
               <div class="goods_detail_qq">联系方式<el-input v-model="order.qq_email" placeholder="输入手机/QQ/邮箱" size="small"></el-input></div>
               <div  class="goods_detail_qq">查询密码<el-input v-model="order.password" placeholder="查询密码" size="small"></el-input></div>
-              <div><el-button size="medium" type="primary" plain @click="create_order">点击购买</el-button></div>
+              <div><el-button size="medium" type="primary" plain @click="create_order" :disabled="goods.stock_now===0">点击购买</el-button></div>
           </div>
           <div class="goods_detail_more">
               <h3>商品说明:</h3>
@@ -95,7 +96,7 @@ methods:{
     place-self: center start ;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 50px 50px 50px 50px 50px 50px;
+    grid-template-rows: 50px 50px 50px 50px 50px 50px 50px;
     place-items:center start;
 }
 .goods_detail_d{

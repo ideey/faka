@@ -51,7 +51,7 @@ export default {
       methods:{
           async fetch(){
               const d = await this.$http.post('/goods/api/get_kami_overview')
-              console.log(d.data)
+              //console.log(d.data)
               if(d.data.code===1){
                   let a = d.data.data
                   a.forEach(el => {
