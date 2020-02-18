@@ -1,6 +1,6 @@
 module.exports = app => {
     const mongoose = require("mongoose")
-    mongoose.connect('mongodb://fakaapi.idaay.com:57890/faka', {
+    mongoose.connect(process.env.MONGODB, {
       useNewUrlParser: true,
       useCreateIndex:true,
       useFindAndModify:false,
