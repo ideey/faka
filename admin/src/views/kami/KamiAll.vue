@@ -4,31 +4,31 @@
       <el-button @click="fetch()" size="small" type="info">刷新列表</el-button>
     <el-table
       :data="goods_list"
-      style="width: 100%">
+      style="width: 90%">
       <el-table-column
         prop="name"
         label="商品名称"
-        width="180">
+        width="280">
       </el-table-column>
       <el-table-column
         prop="all_num"
         label="总数量"
-        width="80">
+        width="120">
       </el-table-column>
       <el-table-column
         prop="wait_num"
         label="待售量"
-        width="80">
+        width="120">
       </el-table-column>
       <el-table-column
         prop="sell_num"
         label="已售量"
-        width="80">
+        width="120">
       </el-table-column>
       <el-table-column
         prop="noActive_num"
         label="锁定量"
-        width="80">
+        width="120">
       </el-table-column>
     </el-table>
 

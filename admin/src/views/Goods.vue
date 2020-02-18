@@ -7,12 +7,12 @@
                     <el-table
                         :data="goods_list"
                         style="width: 90%"
-                        height="450px">
+                        height="700px">
                         <el-table-column
                           prop="type.name"
                           label="商品分类"
                           sortable
-                          width="180">
+                          width="200">
                           <template slot-scope="scope">
                              {{scope.row.type.name}}
                             </template>
@@ -21,18 +21,18 @@
                           prop="name"
                           label="商品名称"
                           sortable
-                          width="180">
+                          width="240">
                         </el-table-column>
                         <el-table-column
                           prop="price"
                           label="价格"
-                          width="80">
+                          width="120">
                         </el-table-column>
                         <el-table-column
                           prop="sort"
                           label="排序"
                           sortable
-                          width="80">
+                          width="100">
                         </el-table-column>
 <!--                         <el-table-column
                           prop="stock"
@@ -44,7 +44,7 @@
                           prop="kamiType"
                           label="卡密类型"
                           sortable
-                          width="120">
+                          width="160">
                         <template slot-scope="scope">
                              <el-tag v-if="scope.row.kamiType===1" size="mini" type="info">默认卡密</el-tag>
                              <el-tag v-if="scope.row.kamiType===2" size="mini" type="warning">循环卡密</el-tag>
@@ -54,7 +54,8 @@
                         <el-table-column
                           prop="active"
                           sortable
-                          label="状态">
+                          label="状态"
+                          width="200">
                             <template slot-scope="scope">
                               <el-tag v-if="scope.row.active===1" size="mini" type="success">激活</el-tag>
                               <el-tag v-else-if="scope.row.active===0" size="mini" type="info">未激活</el-tag>
@@ -62,7 +63,7 @@
                         </el-table-column>
                             <el-table-column
                             label="操作"
-                            width="150">
+                            width="160">
                             <template slot-scope="scope">
                               <el-button @click="handleActive(scope.row)" type="text" size="mini">激活切换</el-button>
                               <el-button @click="handleEdit(scope.row)" type="text" size="mini">编辑</el-button>

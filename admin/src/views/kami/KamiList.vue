@@ -28,7 +28,7 @@
       </div>
       <el-table
       :data="kami_list"
-      height="450px"
+      height="700px"
       >
         <el-table-column
       type="index"
@@ -39,13 +39,13 @@
         prop="type_info[0].name"
         label="商品分类"
         sortable
-        width="100">
+        width="120">
 </el-table-column>
     <el-table-column
         prop="goods_info[0].name"
         label="商品名称"
        sortable
-        width="160">
+        width="200">
 </el-table-column>
 <el-table-column
         prop="goods_info[0].price"
@@ -57,7 +57,7 @@
         prop="kami"
         label="卡密信息"
         show-overflow-tooltip
-        width="180">
+        width="240">
 </el-table-column>
 <el-table-column
         prop="goods_info[0].kamiType"
@@ -67,6 +67,7 @@
             <el-tag v-if="scope.row.goods_id.kamiType===1" type="success" size="mini">默认卡</el-tag>
             <el-tag v-if="scope.row.goods_id.kamiType===2" type="warning" size="mini">循环卡</el-tag>
             <el-tag v-if="scope.row.goods_id.kamiType===3" type="danger" size="mini">重复卡</el-tag>
+            <el-tag v-if="scope.row.goods_id.kamiType===undefined" type="danger" size="mini">默认卡</el-tag>
         </template>
 </el-table-column>
 <el-table-column
@@ -90,7 +91,7 @@
 </el-table-column>
 <el-table-column
         label="操作"
-        width="80">
+        width="100">
         <template slot-scope="scope">
              <el-button @click="handleDel(scope.row)" type="text" size="small">删除</el-button>
              <!-- <el-button @click="handleSell(scope.row)" type="text" size="small">可售状态切换</el-button> -->

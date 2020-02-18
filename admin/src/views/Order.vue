@@ -6,58 +6,59 @@
             <el-table
             :data="order_list"
             style="width: 100%"
-            max-height="500px"
+            max-height="700px"
            >
             <el-table-column
               prop="createdAt"
               label="下单时间"
               sortable
               :formatter="formatter_creat_time"
-              width="135">
+              width="150">
             </el-table-column>
             <el-table-column
               prop="_id"
               label="订单编号"
-              width="190">
+              width="200">
             </el-table-column>
             <el-table-column
               prop="goods_name"
               label="商品名称"
               sortable
               show-overflow-tooltip
-              width="120">
+              width="180">
             </el-table-column>
             <el-table-column
               prop="num"
               label="数量"
-              width="50">
+              width="60">
             </el-table-column>
             <el-table-column
               prop="price"
               label="单价"
-              width="50">
+              width="60">
             </el-table-column>
             <el-table-column
               prop="money"
               label="金额"
-              width="50">
+              width="70">
             </el-table-column>
             <el-table-column
               prop="qq_email"
               label="联系方式"
               sortable
               show-overflow-tooltip
-              width="100">
+              width="150">
             </el-table-column>
             <el-table-column
               prop="password"
               label="查询密码"
-              width="80">
+              show-overflow-tooltip
+              width="100">
             </el-table-column>
             <el-table-column
               prop="kami"
               label="卡密"
-              width="110"
+              width="180"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
@@ -73,10 +74,10 @@
             </el-table-column>
               <el-table-column
               label="操作"
-              width="120">
+              width="150">
               <template slot-scope="scope">
                 <el-button @click="copykami(scope.row)" type="text" size="mini">复制卡密</el-button>
-                <el-button @click="handleEdit(scope.row)" type="text" size="mini">确认支付</el-button>
+                <el-button @click="handleEdit(scope.row)" type="text" size="mini">手动确认支付</el-button>
               </template>
             </el-table-column>
 

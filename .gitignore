@@ -59,7 +59,6 @@ typings/
 
 # next.js build output
 .next
-
+nodemon.json
 test.http
 sysnc.sh
-目前想到的问题
