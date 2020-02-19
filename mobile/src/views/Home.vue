@@ -12,7 +12,7 @@
     </div>
     <div class="foot"><!-- <Foot></Foot> -->
      <span style="color:white;">交流QQ群: 1054239862</span><br>
-      <a href="/admin"><span style="color:white;">电脑端</span></a>
+      <a href="/"><span style="color:white;">电脑端</span></a>
     </div>
   </div>
 </template>
