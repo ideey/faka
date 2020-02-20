@@ -13,7 +13,7 @@
                   <el-form>
                          <el-form ref="form" :model="form" label-width="120px">
                             <el-form-item label="分类名称">
-                              <el-input v-model="form.name" placeholder="4-20个字符" size="mini"></el-input>
+                              <el-input v-model="form.name" placeholder="4-10个字符" size="mini"></el-input>
                             </el-form-item>
                             <el-form-item label="分类排序">
                               <el-input v-model.number="form.sort" placeholder="数字小的排前面" size="mini"></el-input>
@@ -77,7 +77,7 @@
     data() {
       return {
          types:[],
-         form:{active:1,sort:20}
+         form:{name:'',active:1,sort:20}
       }
     },
     async created(){
@@ -89,6 +89,10 @@
         this.types = d.data.data
       },
       async onSubmit(){
+        if(this.form.name.length<4 || this.form.name.length>10){
+          this.$message({type:"error",message:'名称请控制在4-10字符'})
+          return 
+        }
         const d = await this.$http.post('/goods/api/set_types',this.form)
         if(d.data.code===1){
           this.$message({type:"success",message:"增加成功"})

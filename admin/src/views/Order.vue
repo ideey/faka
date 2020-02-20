@@ -3,6 +3,34 @@
   <div>
         <el-tabs v-model="activeName" >
         <el-tab-pane label="订单列表" name="list">
+          <div class="order_list_a1">
+                <el-select v-model="form.type_id" placeholder="选择分类" size="mini" @change="type_change" clearable>
+                <el-option
+                v-for="item in types"
+                :key="item._id"
+                :label="item.name"
+                :value="item._id"
+                >
+                </el-option>
+            </el-select>
+            <el-select v-model="form.goods_id" placeholder="选择商品" size="mini" clearable>
+                <el-option
+                v-for="item in goods"
+                :key="item._id"
+                :label="item.name"
+                :value="item._id">
+                </el-option>
+            </el-select>
+            <el-select v-model="form.order_status" placeholder="订单状态" size="mini" clearable>
+                <el-option  label="全部" value=0>  </el-option>
+                <el-option  label="待支付" value=1>  </el-option>
+                <el-option  label="已支付" value=2>  </el-option>
+                <el-option  label="手动确认支付" value=3>  </el-option>
+                <el-option  label="支付成功-无卡密" value=4>  </el-option>
+            </el-select>
+            <el-button @click="query()" size="mini" type="primary">查询</el-button>
+            
+          </div>
             <el-table
             :data="order_list"
             style="width: 100%"
@@ -88,6 +116,15 @@
         </el-tabs>
         
   </div>
+          <div class="block1">
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page.sync="form.page"
+            :page-size="50"
+            layout="total, prev, pager, next"
+            :total="count">
+          </el-pagination>
+        </div>
       <el-dialog title="手动确认支付" :visible.sync="show_edit">
           <el-alert
     title="务必确认收款后,才执行手动确认"
@@ -124,6 +161,7 @@
       </div>
     </el-dialog>
   </div>
+  
 </template>
 
 <script>
@@ -135,15 +173,33 @@ export default {
       order_list:[],
       edit_order:{},//操作订单
       show_edit:false,
+      form:{type:'',goods_id:'',order_status:'',page:1},
+      types:[],
+      goods:[],
+      count:0
       
     }
   },
-  created(){this.fetch()},
+  created(){
+    this.fetch(),
+    this.get_types()
+  },
   methods:{
-    async fetch(){
-      const d = await this.$http.post('/order/api/get_all_order')
-      //console.log(d.data.data)
-      this.order_list = d.data.data
+    async  fetch(page){
+            if(page){
+                page =Number(page)
+            }else{
+                page = 1
+            }
+            this.form.page = page
+            this.query()
+          },
+    async query(){
+      const d = await this.$http.post('/order/api/get_all_order',this.form)
+      if(d.data.code ===1){
+        this.count = d.data.count
+        this.order_list = d.data.data
+      }
     },
     handleEdit(row){
       if(row.status === 2 || row.status ===3 ){
@@ -180,11 +236,69 @@ export default {
     },
     formatter_creat_time(row){
       return moment(row.createdAt).format('YYYY-MM-DD HH:mm:ss')
-    }
+    },
+    async get_types(){
+          //获取分类
+          const d =  await this.$http.post('/goods/api/get_types')
+         
+          let a = d.data.data.filter(el=>{
+            return el.active === 1
+            })
+            a.sort((e1,e2)=>{
+            return e1.sort - e2.sort
+            })
+            this.types = a
+        },
+    async type_change(type){
+             if(!type){
+                 this.form.goods_id=''
+                 this.goods = []
+                 //this.form.order_status=''
+                 return
+             }
+            const d = await this.$http.post('/goods/api/get_goods',{type_id:type})
+            if(d.data.data.length > 0){
+            let a = d.data.data.filter(el=>{
+                return el.active === 1
+                })
+                a.sort((e1,e2)=>{
+                return e1.sort - e2.sort
+                })
+                this.goods = a
+                this.form.goods_id = ''
+                this.form.order_status = ''
+            }else{
+                    this.form.goods_id = ''
+                    this.form.order_status = ''
+                    this.goods = []
+                    this.$confirm('此分类下还没有商品', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                    }).then(() => {
+                        this.$router.push('/set_goods')
+                    }).catch(() => {
+                        
+                    });
+                }  
+          },
+    goods_change(){
+            this.form.page =1
+        },
+    status_change(){
+            this.form.page =1
+        },
+    handleCurrentChange(page){
+      this.fetch(page)
+    },
   }
 }
 </script>
 
 <style>
-
+.order_list_a1{
+  display: grid;
+  grid-template-columns: 200px 200px 200px 100px;
+  grid-column-gap: 20px;
+}
 </style>

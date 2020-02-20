@@ -30,7 +30,9 @@
         <div v-if="pay_bad_status===0">
                     <div><h3>卡密信息</h3></div>
         <div style="padding:0 15px 0 15px;"><el-input v-model="order_info.kami" :disabled="true" size="large"></el-input> </div>
-        <div style="margin-top:50px;"> <el-button type="primary" @click="copy_kami">点击复制卡密</el-button> </div>
+        <div style="margin-top:15px;"> <el-button type="primary" @click="copy_kami">点击复制卡密</el-button> </div>
+        <div style="margin-top:15px;font-size:12.8px;">使用说明<br>{{order_info.goods_id.Instructions?order_info.goods_id.Instructions:''}}
+        </div>
         </div>
         <div v-if="pay_bad_status===4">
                     <div style="padding:0 15px 0 15px;">
@@ -93,7 +95,7 @@ export default {
              order_info:{pay_good_info:{}},
              pay_good:false,
              pay_text:'支付状态',
-             pay_bad_status:0,//1-可以继续支付 2-支付连接过时 3-没有支付连接,要新建
+             pay_bad_status:0,//1-可以继续支付 2-支付连接过时 3-没有支付连接,要新建 4-已付款-无卡密-请联系客服
              pay_bad_end_time:0,//支付连接过期时间 倒计时结束时间
              now_S:parseInt((new Date()).getTime()/1000), //现在时间
              start_S:parseInt((new Date()).getTime()/1000)+1, //倒计时开始时间
@@ -251,9 +253,9 @@ export default {
     background-color: rgba(137, 43, 226, 0.2);
 }
 .kami_info{
-    padding:20px 10px 0 10px;
+    padding:10px 10px 0 10px;
     width: 500px;
-    height: 400px;
+    min-height: 400px;
     border-radius: 20px;
     box-shadow: 3px 3px 10px 1px rgba(223, 111, 7, 0.3),-3px -3px 10px 1px rgba(218, 128, 12, 0.3);
 

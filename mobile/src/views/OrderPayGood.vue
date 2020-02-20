@@ -34,6 +34,9 @@
                <!--  <van-button size="small" type="danger">按钮</van-button> -->
             </div>
             </van-panel>
+            <van-panel title="使用说明" style="margin-top:10px;">
+                <div style="font-size:14px;">{{order_info.goods_id.Instructions?order_info.goods_id.Instructions:''}}</div>
+            </van-panel>
           </div>
           <div v-if="this.pay_bad_status===4">
                <van-cell  value="支付成功,但卡密无库存,请联系客服微信:12345" />

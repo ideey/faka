@@ -12,8 +12,28 @@ module.exports = app => {
     })
     //获取所有订单信息 后台用
     router.post('/get_all_order',async(req,res)=>{
-      const d = await Order.find()//.populate('type_id').populate('goods_id').populate('kami_id')
-      res.send({code:1,data:d})
+      const {type_id,goods_id,order_status,page} = req.body
+      const limit = 50 //每页返回50
+      const skip = (Number(page) - 1)*limit 
+      const match = {} //查询条件
+      if(goods_id){
+        match.goods_id = mongoose.Types.ObjectId(goods_id)
+      }
+      if(type_id){
+        match.type_id = mongoose.Types.ObjectId(type_id)
+      }
+      if(order_status){
+        const status = Number(order_status)
+        if(status>0){
+          match.status = status
+        }
+      }
+      const count = await Kami.find(match).countDocuments()
+      //const d = await Order.find()//.populate('type_id').populate('goods_id').populate('kami_id')
+      const f = await Order.aggregate([
+        {  $match:match  },{ $skip:skip }, { $limit:limit  }
+      ])
+      res.send({code:1,data:f,count:count})
     })
 
     //手动确认支付订单
