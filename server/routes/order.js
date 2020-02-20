@@ -28,7 +28,7 @@ module.exports = app => {
           match.status = status
         }
       }
-      const count = await Kami.find(match).countDocuments()
+      const count = await Order.find(match).countDocuments()
       //const d = await Order.find()//.populate('type_id').populate('goods_id').populate('kami_id')
       const f = await Order.aggregate([
         {  $match:match  },{ $skip:skip }, { $limit:limit  }

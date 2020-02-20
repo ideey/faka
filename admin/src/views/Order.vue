@@ -36,6 +36,11 @@
             style="width: 100%"
             max-height="700px"
            >
+               <el-table-column
+                type="index"
+                label="序号"
+                width="50">
+              </el-table-column>
             <el-table-column
               prop="createdAt"
               label="下单时间"
