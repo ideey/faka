@@ -56,8 +56,7 @@ export default {
   width: 220px;
   height: 310px;
   color:cornsilk;
-  background-color: blueviolet;
-  background-image: linear-gradient(to bottom,rgb(169, 92, 241) 80%,blueviolet);
+  background-image: linear-gradient(to bottom,rgb(143, 141, 145) 80%,rgb(218, 213, 223));
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 220px 25px 25px 40px;

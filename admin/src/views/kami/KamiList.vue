@@ -30,7 +30,7 @@
       :data="kami_list"
       height="700px"
       >
-        <el-table-column
+    <el-table-column
       type="index"
       label="序号"
       width="50">

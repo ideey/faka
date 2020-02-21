@@ -13,8 +13,8 @@
       <el-main>
         <div class="mid_mid"><router-view  :key="$route.path"/></div>
         </el-main>
-      <el-footer><span style="color:blueviolet;">交流QQ群: 1054239862</span><br>
-      <a href="/mobile/">移动端</a> <a href="/admin/">管理端</a>
+      <el-footer><span style="color:green;">交流QQ群: 1054239862</span><br>
+      <a href="/mobile/" style="color:green;">移动端</a> <a href="/admin/" style="color:green;">管理端</a>
       </el-footer>
     </el-container>
   </div>
@@ -42,6 +42,7 @@ export default {
   width:100%;
   height: 100%;
   background-color: darkslategray;
+  background-image: linear-gradient(to left,rgba(14, 190, 102, 0.863) 60%,rgb(9, 128, 25));
   display: grid;
   place-items: center center;
 }

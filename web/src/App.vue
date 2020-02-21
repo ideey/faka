@@ -18,6 +18,10 @@ body{
   padding:0;
   
 }
+
+a,.router-link-exact-active,.router-link-active{
+   text-decoration: none;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
