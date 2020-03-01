@@ -33,7 +33,7 @@ module.exports = async app => {
       if(d){
         res.send({code:1,data:d})
       }else{
-        res.send({code:o,data:d})
+        res.send({code:0,data:d})
       }
       
     })
