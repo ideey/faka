@@ -35,5 +35,24 @@ ___
 >>> 2. 把文件夹中bin目录中的node  npm 等命令放到系统变量中，这样运行时才可以找到。这里有两种方法:
 >>>> 1. 用软连接ln -s把bin下面这些命令连接到当前的环境变量目录中，比如/usr/bin中。
 >>>> 2. 修改/etc/profile文件，在其中把bin整个目录都加入到环境变量，我推荐这个法子，因为以后使用node时可能这个目录会增加别的命令，比如现在还有有npx。这样就不用为每个命令单独软连接。
+>>> 3. 使用环境变量生效，测试ok
+
+
+>> ### mongodb数据库的安装: [官方安装教程点此](https://docs.mongodb.com/master/tutorial/install-mongodb-on-red-hat/)  注意选当前最新稳定版本为4.2
+>>> 1. 创建mongodb的yum源文件 `vim /etc/yum.repos.d/mongodb-org-4.2.repo`
+>>> 2. 在里面输入以下内容，并保存退出
+>>>> ```
+>>>> [mongodb-org-4.2]
+>>>> name=MongoDB Repository
+>>>> baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.2/x86_64/
+>>>> gpgcheck=1
+>>>> enabled=1
+>>>> gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc
+>>>> ```
+>>> 3. 安装： `sudo yum install -y mongodb-org`
+>>> 4. 安装之后 启动: `sudo systemctl start mongod`
+>>> 5. 开机启动:   `sudo systemctl enable mongod`
+>>> 6. 另外的一些操作命令,停止:`sudo systemctl stop mongod`
+>>> 7. 查看mongodb是否启动成功,服务端口是否打开： `ss -ntl`,如果输出中有` 127.0.0.1:27017`说明服务启动，端口打开.
 
 
