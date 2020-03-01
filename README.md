@@ -101,10 +101,70 @@ ___
 
 ### 前端的安装
 + 进入项目目录 `cd /home/www/faka`
-+ 在三个前端项目文件夹admin web mobile下都有一个`.env.production`文件,把里面的`VUE_APP_API_URL=https://fakaapi.mm23k.cn`修改为你的后端域名,最后面不要加/，注意根据你是否配置https选择协议前缀。`http/https`  (三个都要改)
++ 在三个前端项目文件夹admin web mobile下都有一个`.env.production`文件,把里面的`VUE_APP_API_URL=https://fakaapi.mm23k.cn`修改为你的后端api接口域名,最后面不要加/，注意根据你是否配置https选择协议前缀。`http/https`  (三个都要改)
++ ####以下三步按顺序，不能乱，否则会造成生面的页面缺失。(一定要先构建PC端页面)
 + 进入PC端项目`cd /home/www/faka/web`,安装依赖:`npm install`,构建页面:`npm run build` (时间根据服务器配置而定)
 + 进入管理端项目`cd /home/www/faka/admin`,安装依赖：`npm install`,构建页面:`npm run build`
 + 进入移动端项目`cd /home/www/faka/mobile`,安装依赖:`npm install`,构建页面: `npm run build`
+___
+## 前端/后端部署在nginx后
+### 生成域名证书 (不需要可以跳过)
++ `acme.sh --issue -d faka.mm23k.cn --webroot /usr/share/nginx/html/` 按自己的域名做修改，特别注意webroot参数是一个目录，是一个可以在当前nginx运行时访问到的目录，也就是网站根目录。acme.sh会向里面放入一些文件让Let's Encrypt来访问以此验证服务器。因为我的nginx是默认安装的，根目录就是`/usr/share/nginx/html/`，如果你是lnmp或宝塔之类，要根据情况修改。当然lnmp与宝塔默认就带了自动安装Let's Encrypt的服务，会更方便。
++ `acme.sh --issue -d fakaapi.mm23k.cn --webroot /usr/share/nginx/html/`
++ 以上两步后这两个域名的tsl证书，就会在`/root/.acme.sh/`目录中
+### 安装证书 (这一步的实际意义是为了以后更新证书后nginx可以自动重启生效)
++  新建存放证书的目录： `mkdir -p /etc/nginx/ssl/fakaapi.mm23k.cn`
++  新建存放证书的目录:  `mkdir -p /etc/nginx/ssl/faka.mm23k.cn`
++  安装: `acme.sh --installcert -d fakaapi.mm23k.cn --key-file /etc/nginx/ssl/fakaapi.mm23k.cn/key.pem --fullchain-file /etc/nginx/ssl/fakaapi.mm23k.cn/cert.pem --reloadcmd "service nginx force-reload" `
++  安装 `acme.sh --installcert -d faka.mm23k.cn --key-file /etc/nginx/ssl/faka.mm23k.cn/key.pem --fullchain-file /etc/nginx/ssl/faka.mm23k.cn/cert.pem --reloadcmd "service nginx force-reload" `
++ 以上步骤将两个域名的ssl证书放到了/etc/nginx/ssl目录下，方便配置，acme.sh重点提示配置时不要直接使用.acme.sh目录中的文件，而是采用安装的方式把证书复制到别处。
 
-### 前端后端部署在nginx后
+### 配置后端nginx。
+> 相当于nginx反向代理node的8889端口服务。
+> 进入nginx虚拟主机配置目录新建一个配置:`cd /etc/nginx/conf.d/`,`vim fakaapi.mm23k.cn.conf`,内容如下:
+```
+server
+    {
+        listen 80;
+        server_name fakaapi.mm23k.cn ; #改为你的后端域名
+        index index.html index.htm index.php default.html default.htm default.php;
+        location / {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Nginx-Proxy true;
+        proxy_pass http://127.0.0.1:8889;    #如果你修改了服务端默认端口，记得这里一起修改
+        proxy_redirect off;
+        #return 301 https://$server_name$request_uri; #如果强制启用https，就把这一行打开
+        }
+    }
+server
+    {
+        listen 443 ssl http2;
+        #listen [::]:443 ssl http2;
+        server_name fakaapi.mm23k.cn;  #改为你的后端域名
+        index index.html index.htm index.php default.html default.htm default.php;
+        ssl on;
+        ssl_certificate /etc/nginx/ssl/fakaapi.mm23k.cn/cert.pem;   #注意路径
+        ssl_certificate_key /etc/nginx/ssl/fakaapi.mm23k.cn/key.pem;  #注意路径
+        ssl_session_timeout 5m; 
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers "EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5";
+        ssl_session_cache builtin:1000 shared:SSL:10m;
+        ssl_dhparam /etc/nginx/ssl/dhparam.pem;  #注意路径
+
+        location / {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Nginx-Proxy true;
+        proxy_pass http://127.0.0.1:8889;   #如果你修改了服务端默认端口，记得这里一起修改
+        proxy_redirect off;
+    }
+        access_log off;
+    }
+```
+
+
 
