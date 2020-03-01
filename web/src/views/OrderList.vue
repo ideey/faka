@@ -73,6 +73,8 @@
               <template slot-scope="scope">
                   <el-tag v-if="scope.row.status===1" type="danger">未支付</el-tag>
                   <el-tag v-if="scope.row.status===2" type="success">已付款</el-tag>
+                  <el-tag v-if="scope.row.status===3" type="success">手动确认支付</el-tag>
+                  <el-tag v-if="scope.row.status===4" type="success">支付成功-无卡密</el-tag>
               </template>
             </el-table-column>
             <el-table-column
