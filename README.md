@@ -102,8 +102,8 @@ ___
 
 ### 前端的安装
 + 进入项目目录 `cd /home/www/faka`
-+ 在三个前端项目文件夹admin web mobile下都有一个`.env.production.copy`文件,把这三个文件都复制为:`cp .env.production.copy .env.production`
-+ 然后分别编辑这三个文件，把里面的`VUE_APP_API_URL=https://fakaapi.mm23k.cn`修改为你的后端api接口域名,最后面不要加/，注意根据你是否配置https选择协议前缀。`http或https`  (三个都要改)
++ 在三个前端项目文件夹admin web mobile下都有一个`.env.production.copy`文件,(`ls`看不到,用`ls -a`)把这三个文件都复制为:`cp .env.production.copy .env.production`
++ 然后分别编辑这三个文件`.env.production`，把里面的`VUE_APP_API_URL=https://fakaapi.mm23k.cn`修改为你的后端api接口域名,最后面不要加/，注意根据你是否配置https选择协议前缀。`http或https`  (三个都要改)
 + **以下三步按顺序，不能乱，否则会造成生面的页面缺失。(一定要先构建PC端页面)**
 + 进入PC端项目`cd /home/www/faka/web`,安装依赖:`npm install`,构建页面:`npm run build` (时间根据服务器配置而定)
 + 进入管理端项目`cd /home/www/faka/admin`,安装依赖：`npm install`,构建页面:`npm run build`
