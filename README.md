@@ -77,7 +77,7 @@ ___
 1. 解析两个域名到主机。为了部署方便及以后的扩展，采用双域名。一个为前端访问域名，一个为后端api接口域名。
 > 比如`faka.mm23k.cn` 为前端访问域名,`fakaapi.mm23k.cn`为后端api域名
 
-2. 下载源码
+2. 下载源码，修改服务端服务
 > + 我习惯放在`/home/www`目录下。进入home目录:`cd /home `, 列出目录中的文件及文件夹:`ls`,如果home中没有`www`目录就新建一个:`mkdir www`,然后进入:`cd www`.
 > + 下载 `git clone https://github.com/ideey/faka.git`，这个过程视网络情况而定，如果是国内服务，可能比较慢。也可以手动下载好了，再上传到服务器。
 > + 进入服务器目录 `cd /home/www/faka/server`，修改mongodb连接地址 `vim pm2.config.js`，保存退出
@@ -92,4 +92,9 @@ ___
 >>  } 
 >>}
 >>```
-> + 启动服务器: `pm2 start pm2.config.js`
+3.  启动服务端: `pm2 start pm2.config.js`
+4.  `ss -ntl`查看8889端口是否打开，8889端口打开，服务端就起来了。
+> pm2相关命令：
+>> `pm2 ls` 查看应用状态
+>> `pm2 stop 0` 停止id为0的应用
+>> `pm2 restart 0` 重启id为0的应用
