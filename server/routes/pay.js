@@ -14,11 +14,16 @@ module.exports = async app => {
     const AlipaySdk = require('alipay-sdk').default
     const AlipayFormData = require('alipay-sdk/lib/form').default
     const alipay_web = await PayConfig.findOne({pay_type:'alipay_web'})
-    const alipaySdk = new AlipaySdk({
-      appId: alipay_web.pay_info.APPID,
-      privateKey: alipay_web.pay_info.alipay_private_key,
-      alipayPublicKey : alipay_web.pay_info.alipay_pub_key,
-    }) 
+    let alipaySdk = {}
+    if(alipay_web){
+      alipaySdk = new AlipaySdk({
+        appId: alipay_web.pay_info.APPID,
+        privateKey: alipay_web.pay_info.alipay_private_key,
+        alipayPublicKey : alipay_web.pay_info.alipay_pub_key,
+      })  
+    }else{
+      alipaySdk = null
+    }
     const API_URL = process.env.API_URL
     //保存支付设置
     router.post('/set_pay',authMiddleware(),async(req,res)=>{
