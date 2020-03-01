@@ -69,6 +69,8 @@ ___
 > + 安装的时候会有三条红色字提示，让我们先安装`socat`，但不用管，因为我们已经安装了nginx，用nginx验证就行了。
 ### 安装git，用于下载源码到服务器
 > + `yum install git -y`
+### 安装pm2，用于部署服务端
+> + `npm install pm2 -g`
 
 
 ## 安装步骤
@@ -78,10 +80,16 @@ ___
 2. 下载源码
 > + 我习惯放在`/home/www`目录下。进入home目录:`cd /home `, 列出目录中的文件及文件夹:`ls`,如果home中没有`www`目录就新建一个:`mkdir www`,然后进入:`cd www`.
 > + 下载 `git clone https://github.com/ideey/faka.git`，这个过程视网络情况而定，如果是国内服务，可能比较慢。也可以手动下载好了，再上传到服务器。
-> + 进入服务器目录 `cd ./faka/server`，修改mongodb连接地址 `vim pm2.config.js`
+> + 进入服务器目录 `cd /home/www/faka/server`，修改mongodb连接地址 `vim pm2.config.js`，保存退出
 >>```
->>            env_production: {
->>              NODE_ENV: 'production',
->>              MONGODB:'mongodb://127.0.0.1:27017/faka' //如果你修改了mongdb的默认端口这里也做相应修改。faka就是数据库的名称，也可以修改。(faka这个数据库不用事先建立,与mysql不同)
->>            } 
+>>{
+>>    name: 'faka', //这里可以修改，是pm2启动后的项目名称,意义不大
+>>    script: 'index.js',  //启动脚本名称,不要修改
+>>    cwd:'/home/www/faka/server', //这是服务端的目录，根据情况修改
+>>    env_production: {
+>>      NODE_ENV: 'production',
+>>      MONGODB:'mongodb://127.0.0.1:27017/faka' //如果你修改了mongdb的默认端口这里也做相应修改。faka就是数据库的名称，也可以修改。(faka这个数据库不用事先建立,与mysql不同)
+>>  } 
+>>}
 >>```
+> + 启动服务器: `pm2 start pm2.config.js`
