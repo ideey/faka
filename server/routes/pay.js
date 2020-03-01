@@ -30,18 +30,17 @@ module.exports = async app => {
       const {pay_type,pay_info} = req.body
       const d = await PayConfig.findOneAndUpdate({pay_type:pay_type},
         {pay_type,pay_info},{upsert:true,new:true})
-      if(d){
         res.send({code:1,data:d})
-      }else{
-        res.send({code:0,data:d})
-      }
-      
     })
     //获取配置信息
     router.post('/get_pay',authMiddleware(),async(req,res)=>{
       const {pay_type} = req.body
       const d = await PayConfig.findOne({pay_type:pay_type})
-      res.send({code:1,data:d})
+      if(d){
+        res.send({code:1,data:d})
+      }else{
+        res.send({code:0,data:d})
+      }
     })
 
     //请求支付连接 web
