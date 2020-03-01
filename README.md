@@ -118,6 +118,7 @@ ___
 +  安装: `acme.sh --installcert -d fakaapi.mm23k.cn --key-file /etc/nginx/ssl/fakaapi.mm23k.cn/key.pem --fullchain-file /etc/nginx/ssl/fakaapi.mm23k.cn/cert.pem --reloadcmd "service nginx force-reload" `
 +  安装 `acme.sh --installcert -d faka.mm23k.cn --key-file /etc/nginx/ssl/faka.mm23k.cn/key.pem --fullchain-file /etc/nginx/ssl/faka.mm23k.cn/cert.pem --reloadcmd "service nginx force-reload" `
 + 以上步骤将两个域名的ssl证书放到了/etc/nginx/ssl目录下，方便配置，acme.sh重点提示配置时不要直接使用.acme.sh目录中的文件，而是采用安装的方式把证书复制到别处。
++ 为ssl生成一个交易密钥:`openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048` (要一定时间,看配置)
 
 ### 配置后端nginx。
 > 相当于nginx反向代理node的8889端口服务。
@@ -162,6 +163,72 @@ server
         proxy_pass http://127.0.0.1:8889;   #如果你修改了服务端默认端口，记得这里一起修改
         proxy_redirect off;
     }
+        access_log off;
+    }
+```
+
+### 配置前端页面的nginx:
+> 就是与平时的配置一样，根目录为 `/home/www/faka/server/html` (三个前端页面构建好后，都会放在这个目录)
+> 进入nginx的虚拟主机目录，再新建一个配置文件:` vim /etc/nginx/conf.d/faka.mm23k.cn`,内容如下,根据实际情况修改:
+```
+server
+    {
+        listen 80;
+        server_name  faka.mm23k.cn; #注意域名,这是前端访问域名
+        index index.html index.htm index.php default.html default.htm default.php;
+        root  /home/www/faka/server/html;
+        #return 301 https://$server_name$request_uri; #这一条强制启用https，访问http会强制跳转到https
+        location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+        {
+            expires      30d;
+        }
+        location ~ .*\.(js|css)?$
+        {
+            expires      12h;
+        }
+
+        location ~ /.well-known {
+            allow all;
+        }
+        location ~ /\.
+        {
+            deny all;
+        }
+        access_log off;
+    }
+
+server
+    {
+        listen 443 ssl http2;
+        server_name faka.mm23k.cn ; #注意域名,这是前端访问域名
+        index index.html index.htm index.php default.html default.htm default.php;
+        root  /home/www/faka/server/html; #注意目录
+        ssl on;
+        ssl_certificate /etc/nginx/ssl/faka.mm23k.cn/cert.pem;  #注意路径
+        ssl_certificate_key /etc/nginx/ssl/faka.mm23k.cn/key.pem; #注意路径
+        ssl_session_timeout 5m;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers "EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5";
+        ssl_session_cache builtin:1000 shared:SSL:10m;
+        # openssl dhparam -out /usr/local/nginx/conf/ssl/dhparam.pem 2048
+        ssl_dhparam /etc/nginx/ssl/dhparam.pem; #注意路径
+
+        location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+        {
+            expires      30d;
+        }
+        location ~ .*\.(js|css)?$
+        {
+            expires      12h;
+        }
+        location ~ /.well-known {
+            allow all;
+        }
+        location ~ /\.
+        {
+            deny all;
+        }
         access_log off;
     }
 ```
