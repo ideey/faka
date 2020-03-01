@@ -233,5 +233,5 @@ server
     }
 ```
 
-
+> 重启nginx让配置生效 `systemctl restart nginx`
 
