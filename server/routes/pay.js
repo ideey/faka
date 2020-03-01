@@ -13,27 +13,33 @@ module.exports = async app => {
     const PayConfig = require('../models/PayConfig')
     const AlipaySdk = require('alipay-sdk').default
     const AlipayFormData = require('alipay-sdk/lib/form').default
-     const alipay_web = await PayConfig.findOne({pay_type:'alipay_web'})
+    const alipay_web = await PayConfig.findOne({pay_type:'alipay_web'})
     const alipaySdk = new AlipaySdk({
       appId: alipay_web.pay_info.APPID,
       privateKey: alipay_web.pay_info.alipay_private_key,
       alipayPublicKey : alipay_web.pay_info.alipay_pub_key,
     }) 
-
+    const API_URL = process.env.API_URL
     //保存支付设置
     router.post('/set_pay',authMiddleware(),async(req,res)=>{
-      const d = await PayConfig.create(req.body)
+      const {pay_type,pay_info} = req.body
+      const d = await PayConfig.findOneAndUpdate({pay_type:pay_type},
+        {pay_type,pay_info},{upsert:true,new:true})
       res.send({code:1,data:d})
     })
-
-
+    //获取配置信息
+    router.post('/get_pay',authMiddleware(),async(req,res)=>{
+      const {pay_type} = req.body
+      const d = await PayConfig.findOne({pay_type:pay_type})
+      res.send({code:1,data:d})
+    })
 
     //请求支付连接 web
     async function get_alipay_web_link(outTradeNo,money,subject,passback_params){
       const formData = new AlipayFormData()
       formData.setMethod('get');
-      formData.addField('notifyUrl', 'https://fakaapi.idaay.com/alipay/api/alipay_note');
-      formData.addField('return_url', 'https://fakaapi.idaay.com/alipay/api/sync_note');
+      formData.addField('notifyUrl', API_URL+'/alipay/api/alipay_note');
+      formData.addField('return_url', API_URL+'/alipay/api/sync_note');
       formData.addField('bizContent', {
         outTradeNo: outTradeNo,
         productCode: 'FAST_INSTANT_TRADE_PAY',
@@ -68,8 +74,8 @@ module.exports = async app => {
     async function get_alipay_mobile_link(outTradeNo,money,subject,passback_params){
       const formData = new AlipayFormData()
       formData.setMethod('get');
-      formData.addField('notifyUrl', 'https://fakaapi.idaay.com/alipay/api/alipay_note');
-      formData.addField('return_url', 'https://fakaapi.idaay.com/alipay/api/sync_note');
+      formData.addField('notifyUrl', API_URL+'/alipay/api/alipay_note');
+      formData.addField('return_url', API_URL+'/alipay/api/sync_note');
       formData.addField('bizContent', {
         outTradeNo: outTradeNo,
         productCode: 'QUICK_WAP_WAY',
@@ -103,7 +109,7 @@ module.exports = async app => {
       const result = await alipaySdk.exec(
         'alipay.trade.query',
           { 
-            notifyUrl: 'https://fakaapi.idaay.com/alipay/api/alipay_note',
+            notifyUrl: API_URL+'/alipay/api/alipay_note',
             bizContent: {
               out_trade_no: req.body._id
           }
@@ -235,9 +241,9 @@ module.exports = async app => {
         let id = req.query.out_trade_no
         let pay_type = req.query.passback_params
         if(pay_type === 'alipay_web'){
-          res.send(`<html><head><title>支付结果</title><script>window.setTimeout("window.location='https://faka.idaay.com/#/order_pay_good/${id}'",2100);</script></head><body>支付结果,2秒后跳转到支付订单页面</body></html>`)
+          res.send(`<html><head><title>支付结果</title><script>window.setTimeout("window.location='${API_URL}/#/order_pay_good/${id}'",2100);</script></head><body>支付结果,2秒后跳转到支付订单页面</body></html>`)
         }else if(pay_type === 'alipay_mobile'){
-          res.send(`<html><head><title>支付结果</title><script>window.setTimeout("window.location='https://m.faka.idaay.com/#/order_pay_good/${id}'",2100);</script></head><body>支付结果,2秒后跳转到支付订单页面查看</body></html>`)
+          res.send(`<html><head><title>支付结果</title><script>window.setTimeout("window.location='${API_URL}/mobile/#/order_pay_good/${id}'",2100);</script></head><body>支付结果,2秒后跳转到支付订单页面查看</body></html>`)
         }else{
           res.send('请返回订单列表中查看支付结果..')
         }

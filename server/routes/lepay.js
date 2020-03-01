@@ -14,7 +14,10 @@ module.exports = async app => {
     const PayConfig = require('../models/PayConfig')
     const Base64 = require('js-base64').Base64
     const md5 = require('md5.js')
-    const  Store_Id = '2018102410423069218' //门店ID
+    const lepay_info = await PayConfig.findOne({pay_type:'lepay'})
+    const Store_Id = lepay_info?lepay_info.pay_info.Store_Id:''
+   
+ 
 
     //生成Secrst
     function get_StoreSecrst(){

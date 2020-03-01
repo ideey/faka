@@ -3,10 +3,12 @@
 
     <div>
     <el-tabs v-model="activeName" >
-        <el-tab-pane label="支付列表" name="list">
-            <el-card>目前支持支付宝/乐支付,更多支付方式对接中...</el-card>
+        <el-tab-pane label="支付开关" name="list">
+            <el-card><PayList></PayList></el-card>
         </el-tab-pane>
-        <el-tab-pane label="添加支付方式" name="add">
+        
+        <el-tab-pane label="企业支付宝设置" name="alipay">
+            <el-card>
                 <div class="set_pay_1">
                 <el-form ref="form" :model="pay_info" label-width="150px" >
                     <el-form-item label="支付接口">
@@ -26,6 +28,10 @@
                     </el-form-item>
                 </el-form>
             </div>
+        </el-card>
+        </el-tab-pane>
+        <el-tab-pane label="乐付设置" name="lepay">
+            <LePay></LePay>
         </el-tab-pane>
     </el-tabs>
     </div>
@@ -33,25 +39,37 @@
 </template>
 
 <script>
+import LePay from '@/views/pay/LePay.vue'
+import PayList from '@/views/pay/PayList.vue'
 export default {
+    components:{LePay,PayList},
     data(){
         return{
             activeName: 'list',
             pay_info:{
-                name:'支付宝电脑端支付',
+                name:'企业支付宝收款',
             },
             pay_type:'alipay_web',
-            test:0
+            test:1
         }
     },
+    created(){
+        this.fetch()
+    },
     methods:{
+        async fetch(){
+            const d = await this.$http.post('/pay/api/get_pay',{pay_type:'alipay_web'})
+            //console.log(d.data)
+            this.pay_info = d.data.data.pay_info
+        },
         async onSmbit(){
-            this.$message({type:'error',message:'测试系统,不支持增加支付方式'});
+            //this.$message({type:'error',message:'测试系统,不支持增加支付方式'});
             if(this.test){
 
                 const d = await this.$http.post('/pay/api/set_pay',{pay_type:this.pay_type,pay_info:this.pay_info})
                 if(d.data.code === 1){
                     this.$message({type:'success',message:'支付方式增加成功'})
+                    this.fetch()
                 }
             }
         },
