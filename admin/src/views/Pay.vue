@@ -59,8 +59,9 @@ export default {
     methods:{
         async fetch(){
             const d = await this.$http.post('/pay/api/get_pay',{pay_type:'alipay_web'})
-            //console.log(d.data)
-            this.pay_info = d.data.data.pay_info
+            if(d.data.code === 1){
+                this.pay_info = d.data.data.pay_info
+            }
         },
         async onSmbit(){
             //this.$message({type:'error',message:'测试系统,不支持增加支付方式'});

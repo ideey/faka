@@ -23,8 +23,9 @@ export default {
     methods:{
         async fetch(){
             const d = await this.$http.post('/pay/api/get_pay',{pay_type:'lepay'})
-            //console.log(d.data)
-            this.pay_info = d.data.data.pay_info
+            if(d.data.code === 1 ){
+                this.pay_info = d.data.data.pay_info
+            }
         },
         async save(){
             //console.log(this.pay_type,this.pay_info)
