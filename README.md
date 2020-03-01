@@ -91,7 +91,8 @@ ___
 >>    env_production: {
 >>      NODE_ENV: 'production',
 >>      MONGODB:'mongodb://127.0.0.1:27017/faka' //如果你修改了mongdb的默认端口这里也做相应修改。faka就是数据库的名称，也可以修改。(faka这个数据库不用事先建立,与mysql不同)
->>      SECRET:"i8efnj98fjeEfJFE8fnza09"  //修改为自己的随机安全字符串 可以为大小写字母及数字 16-32位
+>>      SECRET:"i8efnj98fjeEfJFE8fnza09",  //修改为自己的随机安全字符串 可以为大小写字母及数字 16-32位
+>>      API_URL:"https://fakaapi.mm23k.cn"  //修改为自己后端api的url
 >>  } 
 >>}
 >>```
