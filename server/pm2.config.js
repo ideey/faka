@@ -11,11 +11,13 @@ module.exports = {
             max_memory_restart: '100M',
             env: {
             NODE_ENV: 'development',
-            MONGODB:'mongodb://127.0.0.1:27017/faka'
+            MONGODB:'mongodb://127.0.0.1:27017/faka',
+            SECRET:"i8efnj98fjeEfJFE8fnza09"
             },
             env_production: {
             NODE_ENV: 'production',
-            MONGODB:'mongodb://127.0.0.1:27017/faka'
+            MONGODB:'mongodb://127.0.0.1:27017/faka',
+            SECRET:"i8efnj98fjeEfJFE8fnza09"  //修改为自己的随机安全字符串 可以为大小写字母及数字 16-32位
             }
         },
     ]

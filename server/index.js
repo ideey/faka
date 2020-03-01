@@ -21,7 +21,7 @@ require('./routes/web/order.js')(app)   //前端订单相关
 
 require('./plugins/cron')(app)//开启定时任务
 
-app.set('secret', 'i2u34fhhroi3u412my8')
+app.set('secret', process.env.SECRET)
 
 app.use('/uploads', express.static(__dirname + '/uploads'))
 

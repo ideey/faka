@@ -17,16 +17,7 @@ module.exports = app => {
       apiVersion: '2017-05-25'
     });
 
-  router.post('/test',async (req,res)=>{
-    const d = await Config.create({
-      username:'xjm',
-      template:1,
-      goods_cat:'JHS',
-      goods_num:12,
-      PID:'mm_45869877_652250074_109741750403'
-    })
-    res.send(d)
-  })
+
     router.post('/getConfig',async (req,res)=>{
       console.log(req.user)
       const d = await Config.findOne({username:req.user.username})
@@ -85,7 +76,6 @@ module.exports = app => {
           time:time,
           expriess_at:expriess_at
         })
-        
         res.send(result)
       }else{
         
