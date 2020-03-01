@@ -236,6 +236,13 @@ server
 
 > 重启nginx让配置生效 `systemctl restart nginx`
 
+## 注册管理员
+> 在`https://faka.mm23k.cn/admin/`(域名换为你自己的)中注册管理员,只能注册一个，之后不能再注册。个人业务,不支持普通用户注册。普通用户直接在前端用下单时的联系方式与查询密码，查询订单信息。
+## 系统更新
+> + 进入项目目录:`cd /home/www/faka`
+> + 拉取代码： `git pull`
+> + 如果只有服务端更新 : `pm2 restart ./server/pm2.config.js`
+> + 如果前端页面有更新,在对应项目中重新构建 ,例如管理端有更新:`cd /home/www/faka/admin`,`npm run build`
 # 安全说明
 > + 强烈推荐使用https
 > + 不要开放mongodb端口外网访问权限.除非你确定知道自己在做什么。

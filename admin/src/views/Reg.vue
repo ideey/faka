@@ -17,10 +17,10 @@
         <el-form-item label="手机" prop="phone_num">
           <el-input v-model="ruleForm.phone_num" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="短信验证码" prop="sms_num">
+<!--         <el-form-item label="短信验证码" prop="sms_num">
           <el-input v-model="ruleForm.sms_num" autocomplete="off"></el-input>
           <el-button type="info" @click="get_sms" size="mini">获取短信验证码</el-button>
-        </el-form-item>
+        </el-form-item> -->
         
         <el-form-item>
           <el-button type="danger"  @click="submitForm('ruleForm')">注册</el-button>
@@ -111,7 +111,7 @@ export default {
           ] ,
           email:[{validator:validateEmail,trigger:'blur'}],
           phone_num:[{validator:validatePhone_num,trigger:'blur'}],
-          sms_num:[{validator:validatorSms_num,trigger:'blur'}]
+          //sms_num:[{validator:validatorSms_num,trigger:'blur'}]
         }
       };
     },

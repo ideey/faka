@@ -11,8 +11,8 @@ module.exports = app => {
       mergeParams: true
     })
     const client = new Core({
-      accessKeyId: 'LTAI4FxKcqGBAmMnJRymeq4A',
-      accessKeySecret: 'St0obtdGfa88JpzjjJDr0Vtow3bqcq',
+      accessKeyId: 'LTAI4FxKcqGBAmMnJRymeq4B',
+      accessKeySecret: 'St0obtdGfa88JpzjjJDr0Vtow3bqcw',
       endpoint: 'https://dysmsapi.aliyuncs.com',
       apiVersion: '2017-05-25'
     });
@@ -89,17 +89,21 @@ module.exports = app => {
   app.post('/admin/call/reg',async (req,res)=>{
     const now = moment().unix()
     const user = req.body
-    //console.log(user)
+    
+    //个人使用，只能有一个管理员
+    const allUser = await AdminUser.find().countDocuments()
+    assert(allUser === 0 ,422,'已有管理员,不能注册')
+
     assert(/^[a-z][a-z0-9_]{5,14}$/.test(user.username),422,'用户名须为6-15位字母及数字组成')
     assert(user.password === user.checkPass,422,'两次密码不相同')
     //同一手机，同一用户名，同一邮箱不能再注册
     const thisOne = await AdminUser.find({$or:[{username:req.body.username},{phone_num:req.body.phone_num},{email:req.body.email}]})
     assert(thisOne.length===0,422,'同一手机|用户名|邮箱只能注册一次')
-
-    const sms = await Sms.findOne({phone_num:req.body.phone_num}).sort({expriess_at:-1})
-    assert(sms,422,'请获取短信验证码，并输入')
-    assert(sms.expriess_at>now,422,'短信验证码过期，请重新获取')
-    assert(sms.sms_num===req.body.sms_num,422,'验证码不正确，请重新输入')
+    //个人使用，不用短信验证注册
+    //const sms = await Sms.findOne({phone_num:req.body.phone_num}).sort({expriess_at:-1})
+    //assert(sms,422,'请获取短信验证码，并输入')
+    //assert(sms.expriess_at>now,422,'短信验证码过期，请重新获取')
+    //assert(sms.sms_num===req.body.sms_num,422,'验证码不正确，请重新输入')
     const model = await AdminUser.create(user)
     res.send({code:1,message:'ok'})
   })
