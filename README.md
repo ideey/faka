@@ -58,25 +58,25 @@ ___
 >> 6. 另外的一些操作命令,停止:`sudo systemctl stop mongod`
 >> 7. 查看mongodb是否启动成功,服务端口是否打开： `ss -ntl`,如果输出中有` 127.0.0.1:27017`说明服务启动，端口打开.
 
-### nginx的安装 [参考教程](https://blog.csdn.net/sqlquan/article/details/101099850)
+#### nginx的安装 [参考教程](https://blog.csdn.net/sqlquan/article/details/101099850)
 > + 如果有宝塔环境,或是lnmp环境，那nginx已经ok了，只要做相应配置。
 > + 单独安装nginx，也很简单:` sudo yum -y install nginx` （删除nginx为: ` sudo yum remove nginx`）
 > + `ss -ntl`看80端口是否打开，有就ok了
 
-### 安装TSL证书服务（Let's Encrypt）
+#### 安装TSL证书服务（Let's Encrypt）
 > + 非必须，但强烈建议上tsl，开启https，毕竟也是免费的。
 > + 安装acme.sh ` curl  https://get.acme.sh | sh `
 > + 安装的时候会有三条红色字提示，让我们先安装`socat`，但不用管，因为我们已经安装了nginx，用nginx验证就行了。
-### 安装git，用于下载源码到服务器
+#### 安装git，用于下载源码到服务器
 > + `yum install git -y`
-### 安装pm2，用于部署服务端
+#### 安装pm2，用于部署服务端
 > + `npm install pm2 -g`
 
 
 ## 安装步骤
 1. 解析两个域名到主机。为了部署方便及以后的扩展，采用双域名。一个为前端访问域名，一个为后端api接口域名。
 > 比如`faka.mm23k.cn` 为前端访问域名,`fakaapi.mm23k.cn`为后端api域名
-
+### 服务端的安装
 2. 下载源码，修改服务端服务
 > + 我习惯放在`/home/www`目录下。进入home目录:`cd /home `, 列出目录中的文件及文件夹:`ls`,如果home中没有`www`目录就新建一个:`mkdir www`,然后进入:`cd www`.
 > + 下载 `git clone https://github.com/ideey/faka.git`，这个过程视网络情况而定，如果是国内服务，可能比较慢。也可以手动下载好了，再上传到服务器。
@@ -95,6 +95,9 @@ ___
 3.  启动服务端: `pm2 start pm2.config.js`
 4.  `ss -ntl`查看8889端口是否打开，8889端口打开，服务端就起来了。
 > pm2相关命令：
->> `pm2 ls` 查看应用状态
->> `pm2 stop 0` 停止id为0的应用
->> `pm2 restart 0` 重启id为0的应用
+>> + `pm2 ls` 查看应用状态
+>> + `pm2 stop 0` 停止id为0的应用
+>> + `pm2 restart 0` 重启id为0的应用
+
+### 前端的安装
+
