@@ -80,7 +80,7 @@ ___
 2. 下载源码，修改服务端服务
 > + 我习惯放在`/home/www`目录下。进入home目录:`cd /home `, 列出目录中的文件及文件夹:`ls`,如果home中没有`www`目录就新建一个:`mkdir www`,然后进入:`cd www`.
 > + 下载 `git clone https://github.com/ideey/faka.git`，这个过程视网络情况而定，如果是国内服务，可能比较慢。也可以手动下载好了，再上传到服务器。
-> + 进入服务器目录 `cd /home/www/faka/server`，修改mongodb连接地址 `vim pm2.config.js`，保存退出
+> + 进入服务器目录 `cd /home/www/faka/server`，修改mongodb连接地址,复制配置文件`cp pm2.config.js.example pm2.config.js`，编辑:`vim pm2.config.js`保存退出
 >>```
 >>{
 >>    name: 'faka', //这里可以修改，是pm2启动后的项目名称,意义不大
@@ -102,7 +102,8 @@ ___
 
 ### 前端的安装
 + 进入项目目录 `cd /home/www/faka`
-+ 在三个前端项目文件夹admin web mobile下都有一个`.env.production`文件,把里面的`VUE_APP_API_URL=https://fakaapi.mm23k.cn`修改为你的后端api接口域名,最后面不要加/，注意根据你是否配置https选择协议前缀。`http/https`  (三个都要改)
++ 在三个前端项目文件夹admin web mobile下都有一个`.env.production.copy`文件,把这三个文件都复制为:`cp .env.production.copy .env.production`
++ 然后分别编辑这三个文件，把里面的`VUE_APP_API_URL=https://fakaapi.mm23k.cn`修改为你的后端api接口域名,最后面不要加/，注意根据你是否配置https选择协议前缀。`http或https`  (三个都要改)
 + **以下三步按顺序，不能乱，否则会造成生面的页面缺失。(一定要先构建PC端页面)**
 + 进入PC端项目`cd /home/www/faka/web`,安装依赖:`npm install`,构建页面:`npm run build` (时间根据服务器配置而定)
 + 进入管理端项目`cd /home/www/faka/admin`,安装依赖：`npm install`,构建页面:`npm run build`
