@@ -91,8 +91,8 @@ module.exports = app => {
     const user = req.body
     
     //个人使用，只能有一个管理员
-    //const allUser = await AdminUser.find().countDocuments()
-    //assert(allUser === 0 ,422,'已有管理员,不能注册')
+    const allUser = await AdminUser.find().countDocuments()
+    assert(allUser === 0 ,422,'已有管理员,不能注册')
 
     assert(/^[a-z][a-z0-9_]{5,14}$/.test(user.username),422,'用户名须为6-15位字母及数字组成')
     assert(user.password === user.checkPass,422,'两次密码不相同')
