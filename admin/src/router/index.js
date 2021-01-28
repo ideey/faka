@@ -77,15 +77,11 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from ,next) => {
-  //console.log('beforeEach...')
- //NProgress.start()
+
  if (!to.meta.isPublic && !localStorage.token) {
    return next('/login')
  }
-/*  if(to.meta.permission&&!store.state.shopinfo.permission.includes(to.meta.permission[0])){
-   Message.warning('没有对应权限')
-   return next(false)
- } */
+
  next()
 })
 

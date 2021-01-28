@@ -7,6 +7,11 @@ const app = express()
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+let options = {
+    setHeaders: function (res, path, stat) {
+      res.set('Access-Control-Allow-Origin', '*')
+    }
+  }
 app.use(require('cors')())
 
 require('./plugins/db')(app)//数据库及模型
@@ -23,7 +28,7 @@ require('./plugins/cron')(app)//开启定时任务
 
 app.set('secret', process.env.SECRET)
 
-app.use('/uploads', express.static(__dirname + '/uploads'))
+app.use('/uploads', express.static(__dirname + '/uploads',options))
 
 app.listen(8889,()=>{
     console.log('启动于 http://127.0.0.1:8889')

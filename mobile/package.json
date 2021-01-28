@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.4.4",
+    "grade-js": "^1.0.10",
     "nprogress": "^0.2.0",
     "vant": "^2.4.7",
     "vue": "^2.6.10",
